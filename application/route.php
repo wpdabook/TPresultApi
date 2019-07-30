@@ -19,4 +19,7 @@
 
  //3:post api.tp5.com/user user.php login()
  Route::post ('user','user/login');
+
+ //配置验证码请求路径
+ Route::get('code/:time/:token/:username/:is_exist', 'code/get_code');
  

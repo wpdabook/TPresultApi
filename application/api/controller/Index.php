@@ -7,4 +7,5 @@ class Index
     {
       echo 'api/index';
     }
+    
 }
