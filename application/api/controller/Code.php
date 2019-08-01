@@ -47,11 +47,11 @@ class Code extends Common
         $this->checkExist($username, $type, $exist);
 
         /* 检测验证码请求频率 30秒一次 */
-        // if (session($username . '_last_send_time')) {
-        //     if (time() - session($username . '_last_send_time') < 3) {
-        //         $this->return_msg(400, $type_name . '验证码，每3s只能发送一次');
-        //     }
-        // }
+        if (session($username . '_last_send_time')) {
+             if (time() - session($username . '_last_send_time') < 30) {
+                 $this->return_msg(400, $type_name . '验证码，每30s只能发送一次');
+             }
+        }
 
         /* 生成验证码 */
         $code = $this->makeCode(6);
@@ -80,10 +80,6 @@ class Code extends Common
      */
     private function sendCodeToEmail($email, $code)
     {
-        //引入PHPMailer的核心文件 使用require_once包含避免出现PHPMailer类重复定义的警告
-        // require_once("../extra/phpmailer/phpmailer.php"); 
-        // require_once("../extra/phpmailer/smtp.php");
-        
         $toemail = $email;
         $mail = new PHPMailer(true);//实例化PHPMailer核心类
 
@@ -93,10 +89,10 @@ class Code extends Common
         $mail->SMTPAuth = true;
         $mail->Username = "568648869@qq.com";
         $mail->Password = "zmcdanxljgukbbbg";
-        $mail->SMTPSecure = 'ssl';//设置使用ssl加密方式登录鉴权
-        $mail->Port = 465;//设置ssl连接smtp服务器的远程服务器端口号，以前的默认是25，但是现在新的好像已经不可用了 可选465或587
-        $mail->setFrom('568648869@qq.com', '接口测试');//设置发件人邮箱地址 这里填入上述提到的“发件人邮箱”
-        $mail->addAddress($toemail, '您好！');
+        $mail->SMTPSecure = 'ssl'; //设置使用ssl加密方式登录鉴权
+        $mail->Port = 465; //设置ssl连接smtp服务器的远程服务器端口号，以前的默认是25，但是现在新的好像已经不可用了 可选465或587
+        $mail->setFrom('568648869@qq.com', '接口测试'); //设置发件人邮箱地址 这里填入上述提到的“发件人邮箱”
+        $mail->addAddress($toemail, 'test');
         $mail->addReplyTo('568648869@qq.com', 'Replay');
         $mail->Subject = "您有新的验证码!";
         $mail->Body = "您的验证码是" . $code . "，验证码的有效期为600秒，本邮件请勿回复！";
@@ -119,16 +115,16 @@ class Code extends Common
     {
         $submail = new MESSAGEXsend();
         $submail->setTo($phone);
-        $submail->SetProject('FoJ494');
-        $submail->AddVar('time', 600);
+        $submail->SetProject('6usEO');
         $submail->AddVar('code', $code);
+        $submail->AddVar('time', 60);
         $xsend = $submail->xsend();
 
         //判断返回结果
         if ($xsend['status'] !== 'success') {
             $this->return_msg(400, $xsend['msg']);
         } else {
-            $this->return_msg(200, '手机验证码发送成功，每天发送5次，请在十分钟内验证！');
+            $this->return_msg(200, '手机验证码发送成功，每天发送5次，请在一分钟内验证！');
         }
     }
 
