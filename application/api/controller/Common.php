@@ -19,7 +19,12 @@ class Common extends Controller
                       'login'=>array(
                         'user_name'=>['require','chsDash','max'=>20],//当自定义正则,正则没有竖杠的时候使用数组方式
                         'user_pwd'=>'require|length:32'
-                      ),
+                       ),
+                       'register' => array(
+                         'user_name' => ['require'],
+                         'user_pwd' => ['require', 'max' => 32, 'min' => 8],
+                         'code' => ['require', 'number', 'length' => 6],
+                       ),
                  ),
                  'Code' => array(
                       'get_code' => array(
@@ -173,4 +178,32 @@ class Common extends Controller
                 break;
         }
     }
+    /**
+     * [检查验证码是否输入正确]
+     * @param  [string] $username [用户名(phone/email)]
+     * @param  [int] $code     [验证码]
+     * @return [json]           [执行返回信息]
+     */
+    protected function checkCode($username, $code)
+    {
+
+        //检测验证码时候输入正确
+        $input_code = md5($username . '_' . md5($code));
+        $last_code = session($username . '_code');//568648869@qq.com_code
+        dump(session($username . '_code')); 
+        if ($input_code !== $last_code) {
+            $this->return_msg('400', '验证码不正确，请重新输入！');
+        }
+
+        //检测是否超时
+        $last_time = session($username . '_last_send_time');
+        if (time() - $last_time > 600) {
+            $this->return_msg('400', '验证码超过600秒，请重新发送！');
+        }
+        
+        //清除验证通过的验证码session
+        //session($username . '_code', null);
+    }
+
+     
 }

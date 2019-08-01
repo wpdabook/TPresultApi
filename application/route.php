@@ -22,4 +22,7 @@
 
  //配置验证码请求路径
  Route::get('code/:time/:token/:username/:is_exist', 'code/get_code');
+
+ //配置用户注册的请求路径
+ Route::post('user/register', 'user/register');
  
