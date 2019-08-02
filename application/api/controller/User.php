@@ -21,6 +21,7 @@ class User extends Common
     {
     	//接收参数
         $data = $this->params;
+        // dump($data);
 
         //检测验证码
         $this->checkCode($data['user_name'], $data['code']);
@@ -51,7 +52,7 @@ class User extends Common
         if (!$res) {
         	$this->return_msg(400, '用户注册失败！');
         } else {
-             $this->return_msg(200, '用户注册成功！');
+            $this->return_msg(200, '用户注册成功！');
         }
     }
     
