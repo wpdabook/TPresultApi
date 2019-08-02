@@ -18,8 +18,11 @@ class User extends Common
         //检测用户名类型
         $userType = $this->checkUsername($this->datas['user_name']);
 
+        //检测用户名是否存在
+        $this->checkExist($this->datas['user_name'],$userType,1);
+
         //在数据库中查询数据 (用户名和密码匹配)
-        $this->matchUserAndPwd($userType);
+        $this->SimpleMatchUserAndPwd($userType);
       
 	}
 	/**
@@ -83,19 +86,51 @@ class User extends Common
         }
     }
    /**
-     * [登陆验证匹配]
+     * [简单登陆验证匹配-该方法未使用，仅做参考]
      * @param  [string] $type [用户名类型 phone/email]
      * @return [json]       [登陆返回信息]
      */
-    private function matchUserAndPwd($type)
+    private function SimpleMatchUserAndPwd($type)
     {
         $res = db('user')->where('user_' . $type, $this->datas['user_name'])->where('user_pwd', md5($this->datas['user_pwd']))->find();
 
         if (!empty($res)) {
             unset($res['user_pwd']);
-            $this->return_msg(200, '登陆成功！', $res);
+            $this->return_msg(200, '登陆成功！', $res); 
         } else {
-            $this->return_msg(400, '登陆失败！', $res);
+            $this->return_msg(400, '用户名或密码错误！');
         }
+    }
+    /**
+     * [登陆验证匹配]
+     * @param  [string] $type [用户名类型 phone/email]
+     * @return [json]       [登陆返回信息]
+     */
+    private function MatchUserAndPwd($type)
+    {
+       switch ($type) {
+           case 'phone':
+               $this->checkExist($this->datas['user_name'],'phone',1);
+               $res = db('user')
+                  ->field('user_id,user_name,user_phone,user_email,user_rtime')
+                  ->where('user_phone',$this->datas['user_name'])
+                  ->find();
+               break;
+           
+           case 'email':
+              $this->checkExist($this->datas['user_name'],'email',1);
+               $res = db('user')
+                  ->field('user_id,user_name,user_phone,user_email,user_rtime')
+                  ->where('user_email',$this->datas['user_name'])
+                  ->find();
+               break;
+       }
+       dump($res['user_pwd']);
+       dump(md5($this->datas['user_pwd']));
+       if($res['user_pwd'] !== md5($this->datas['user_pwd'])){
+              $this->return_msg(400,'用户名或者密码不正确！');
+       }else{
+              $this->return_msg(200,'登录成功！',$res); 
+       }
     }
 }
