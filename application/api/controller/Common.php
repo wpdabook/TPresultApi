@@ -17,14 +17,14 @@ class Common extends Controller
 	protected $params; //过滤后符合要求的参数（不包括time、token）
 	protected $rules = array(
                  'User'=>array(
-                      'login'=>array(
-                        'user_name'=>['require','chsDash','max'=>20],//当自定义正则,正则没有竖杠的时候使用数组方式
-                        'user_pwd'=>'require|length:32'
+                      'login' => array(
+                          'user_name' => ['require'],//当自定义正则,正则没有竖杠的时候使用数组方式
+                          'user_pwd' => ['require', 'max' => 32, 'min' => 8],
                        ),
                        'register' => array(
-                         'user_name' => ['require'],
-                         'user_pwd' => ['require', 'max' => 32, 'min' => 8],
-                         'code' => ['require', 'number', 'length' => 6],
+                          'user_name' => ['require'],
+                          'user_pwd' => ['require', 'max' => 32, 'min' => 8],
+                          'code' => ['require', 'number', 'length' => 6],
                        ),
                  ),
                  'Code' => array(

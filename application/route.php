@@ -26,3 +26,5 @@
  //配置用户注册的请求路径
  Route::post('user/register', 'user/register');
  
+ //配置用户登录的请求路径
+ Route::post('user/login', 'user/login');

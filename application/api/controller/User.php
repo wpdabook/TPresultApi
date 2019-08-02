@@ -6,11 +6,20 @@ namespace app\api\controller;
  */
 class User extends Common
 {
-	
+	/**
+     * [用户登陆时接口请求的方法]
+     * @return [null]
+     */
 	public function login()
 	{
-		$data = $this->params;
-		dump($data);
+        //接收参数
+		$this->datas = $this->params;
+
+        //检测用户名类型
+        $userType = $this->checkUsername($this->datas['user_name']);
+
+        //在数据库中查询数据 (用户名和密码匹配)
+        $this->matchUserAndPwd($userType);
       
 	}
 	/**
@@ -73,5 +82,20 @@ class User extends Common
             $this->return_msg(200, '用户注册成功！');
         }
     }
+   /**
+     * [登陆验证匹配]
+     * @param  [string] $type [用户名类型 phone/email]
+     * @return [json]       [登陆返回信息]
+     */
+    private function matchUserAndPwd($type)
+    {
+        $res = db('user')->where('user_' . $type, $this->datas['user_name'])->where('user_pwd', md5($this->datas['user_pwd']))->find();
 
+        if (!empty($res)) {
+            unset($res['user_pwd']);
+            $this->return_msg(200, '登陆成功！', $res);
+        } else {
+            $this->return_msg(400, '登陆失败！', $res);
+        }
+    }
 }
