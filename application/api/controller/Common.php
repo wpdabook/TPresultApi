@@ -180,27 +180,34 @@ class Common extends Controller
         }
     }
     /**
-     * [检查验证码是否输入正确]
+     * [检查验证码输入是否正确]
      * @param  [string] $username [用户名(phone/email)]
      * @param  [int]    $code     [验证码]
      * @return [json]             [执行返回信息]
+     * 【要先执行发送验证码接口，否则取出值为NULL 】
      */
     protected function checkCode($username, $code)
     {
-        //检测是否超时
+        //1.发送验证码
+        //http://api.tp5.com/code/11/1/568648869@qq.com/0
+
+        //2.检测是否超时
         $last_time = session($username . '_last_send_time');
         if (time() - $last_time > 600) {
             $this->return_msg(400, '验证码超过600秒，请重新发送！');
         }
-        //dump(session($username . '_code')); //取出验证码（要先执行发送验证码接口，否则取出值为null）
-        //检测验证码是否正确
-        $md5_code = md5($username . '_' . md5($code));
-        if (session($username . '_code') !== $md5_code) {
+        //dump(session($username . '_code')); //取出验证码
+
+        //3.检测验证码是否正确
+        $input_code = md5($username . '_' . md5($code));
+        $last_code = session($username . '_code');
+        if ($input_code !== $last_code) {
             $this->return_msg(400, '验证码不正确，请重新输入！');
         }
-        //清除验证通过的验证码session
+        //4.清除验证通过的验证码session
         session($username . '_code', null);
     }
+
     
      
 }
