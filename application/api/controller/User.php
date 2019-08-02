@@ -86,7 +86,7 @@ class User extends Common
         }
     }
    /**
-     * [简单登陆验证匹配-该方法未使用，仅做参考]
+     * [简单登陆验证匹配]
      * @param  [string] $type [用户名类型 phone/email]
      * @return [json]       [登陆返回信息]
      */
@@ -102,7 +102,7 @@ class User extends Common
         }
     }
     /**
-     * [登陆验证匹配]
+     * [登陆验证匹配-该方法未使用，仅做参考]
      * @param  [string] $type [用户名类型 phone/email]
      * @return [json]       [登陆返回信息]
      */
