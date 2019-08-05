@@ -47,11 +47,11 @@ class Code extends Common
         $this->checkExist($username, $type, $exist);
 
         /* 检测验证码请求频率 30秒一次 */
-        if (session($username . '_last_send_time')) {
-             if (time() - session($username . '_last_send_time') < 30) {
-                 $this->return_msg(400, $type_name . '验证码，每30s只能发送一次');
-             }
-        }
+        // if (session($username . '_last_send_time')) {
+        //      if (time() - session($username . '_last_send_time') < 30) {
+        //          $this->return_msg(400, $type_name . '验证码，每30s只能发送一次');
+        //      }
+        // }
 
         /* 生成验证码 */
         $code = $this->makeCode(6);

@@ -31,3 +31,6 @@
 
  //配置用户上传头像请求路径
  Route::post('user/icon', 'user/uploadheadimg');
+
+ //配置用户修改密码请求路径
+ Route::post('user/changepwd', 'user/changepwd');

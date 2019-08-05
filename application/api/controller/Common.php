@@ -31,6 +31,11 @@ class Common extends Controller
                           'user_id' => ['require', 'number'],
                           'user_icon' => ['require', 'image', 'fileSize' => 5000000, 'fileExt' => 'jpg,png,bpm,jpeg'],
                        ),
+                        'changepwd' => array(
+                           'user_name' => ['require'],
+                           'user_old_pwd' => ['require', 'max' => 32, 'min' => 8],
+                           'user_pwd' => ['require', 'max' => 32, 'min' => 8],
+            ),
                  ),
                  'Code' => array(
                       'get_code' => array(
