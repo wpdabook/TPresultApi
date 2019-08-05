@@ -28,3 +28,6 @@
  
  //配置用户登录的请求路径
  Route::post('user/login', 'user/login');
+
+ //配置用户上传头像请求路径
+ Route::post('user/icon', 'user/uploadheadimg');

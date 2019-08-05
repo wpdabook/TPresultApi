@@ -1,6 +1,7 @@
 <?php
 namespace app\api\controller;
 use think\Db;
+use think\Image;
 use think\Request;
 use think\Controller;
 use think\Validate;
@@ -26,6 +27,10 @@ class Common extends Controller
                           'user_pwd' => ['require', 'max' => 32, 'min' => 8],
                           'code' => ['require', 'number', 'length' => 6],
                        ),
+                       'uploadheadimg' => array(
+                          'user_id' => ['require', 'number'],
+                          'user_icon' => ['require', 'image', 'fileSize' => 5000000, 'fileExt' => 'jpg,png,bpm,jpeg'],
+                       ),
                  ),
                  'Code' => array(
                       'get_code' => array(
@@ -39,8 +44,9 @@ class Common extends Controller
 		parent::_initialize();
 		$this->require = Request::instance();
 		// $this->check_time($this->request->only(['time']));
-	    // $this->check_token($this->request->param());
-	    $this->params = $this->check_params($this->request->except(['time','token']));
+	  // $this->check_token($this->request->param());
+	  // $this->params = $this->check_params($this->request->except(['time','token']));
+    $this->params = $this->check_params($this->request->param(true));
 	}
 	public function check_time($arr){
 		if(!isset($arr['time'])||intval($arr['time'])<=1){
@@ -208,6 +214,49 @@ class Common extends Controller
         session($username . '_code', null);
     }
 
+   /**
+     * [上传文件到服务器]
+     * @param  [object] $file [文件资源]
+     * @param  [string] $type [图片类型]
+     * @return [string]       [图片在服务器的路径]
+     */
+    public function uploadFiles($file, $type = '')
+    {
+        $info = $file->move(ROOT_PATH . 'public' . DS . 'uploads');
+
+        if ($info) {
+            //获取图片路径
+            $path = '/uploads/' . $info->getSaveName();
+            $path = preg_replace('/\\\\/', '/', $path);
+            //裁剪图片
+            if (!empty($type)) {
+                $this->imageEdit($path, $type);
+            }
+            return str_replace('\\', '/', $path);
+        } else {
+            $this->return_msg(400, $file->getError());
+        }
+        
+    }
+
+   /**
+     * [图片裁剪]
+     * @param  [string] $path [原图片的绝对路径]
+     * @param  [string] $type [图片的类型]
+     * @return [null]
+     */
+    public function imageEdit($path, $type)
+    {
+        //dump(ROOT_PATH . 'public' . $path);die;
+        $image = Image::open(ROOT_PATH . 'public' . $path);
+        switch ($type) {
+            case 'head_img':
+                $image->thumb(200, 200, Image::THUMB_CENTER)->save(ROOT_PATH . 'public' . $path);
+                break;
+            case 'other_img':
+                break;
+        }
+    }
     
      
 }
